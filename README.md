@@ -1,6 +1,8 @@
 Generationenbackup
 ==================
 
+# (c) pheek, Google Gemini (2025) - 2025_11_24
+
 1. Ertelle ein neues Verzeichnis mit aktuellem Datum im Format
 
    2025_11_22  (JJJJ_MM_DD)
@@ -10,4 +12,4 @@ Generationenbackup
 
 3. backupe den Master ins neue Verzeichnis. Dabei werden auch Dateien auf dem
    Master gelöscht, Verzeichnsse verschoben etc.	
-
+   dies geschieht via "rsync". Details im Skript selbst.
