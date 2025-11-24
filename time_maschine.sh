@@ -6,7 +6,8 @@
 ## -- 1 --
 # Vorausetzung:
 # Setze Master-To, wohin soll gebackupt werden? Wo ist genau die Time-Machine?
-# Es wird gepüft, ob das aktuelle Skript (time_machin.sh) sich in der Time_Machine/ befindet.
+# Es wird davon ausgegangen, dass das aktuelle Skript (time_machin.sh) sich in der //Time_Machine/ befindet.
+# Die Variable lautet ${TIME_MACHINE_DIR}
 #
 
 SCRIPT_PATH=$(readlink -f "$0")
@@ -64,13 +65,13 @@ select_master_dir() {
     done
 }
 
-# Zuerst Kandidaten finden und bei Fehler abbrechen
+# Zuerst Kandidaten für Master-Directory finden und bei Fehler abbrechen
 find_master_candidates 
 if [ $? -ne 0 ]; then
     exit 1 # Beendet das Skript, wenn find_master_candidates fehlschlägt
 fi
 
-# Dann Auswahl durchführen
+# Dann Auswahl durchführen: Welcher Master soll gebackupt werden?
 FROM_DIR=$(select_master_dir)
 if [ $? -ne 0 ]; then
     echo "Skript abgebrochen."
@@ -95,7 +96,7 @@ if [ -z "${LATEST_SNAPSHOT}" ]; then
     echo "--------------------------------------------------------"
     echo "FEHLER: Noch kein Snapshot im Verzeichnis '${TIME_MACHINE_DIR}' gefunden."
     echo "Stehst Du im korrekten Laufwerk/Verzeichnis?"
-    echo "Bitte den ersten Snapshot manuell erstellen oder das Verzeichnis prüfen."
+    echo "Bitte den ersten Snapshot manuell erstellen ./YYYY_MM_DD oder das Verzeichnis prüfen."
     echo "--------------------------------------------------------"
     exit 1 # Skript mit Fehler beenden
 fi
@@ -128,6 +129,7 @@ if [[ ! "$RESPONSE" =~ ^([jJ][aA]|[jJ]|"")$ ]]; then
     exit 0
 fi
 
+#########################################################################################
 ## -- 8 --
 # Hauptroutine
 # a) erstelle Verzeichnis
