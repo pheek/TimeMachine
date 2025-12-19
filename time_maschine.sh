@@ -32,7 +32,7 @@ find_master_candidates() {
         if [[ "$line" != "$TIME_MACHINE_DIR" ]]; then
             POSSIBLE_MASTER_DIRECTORIES+=("$line")
         fi
-    done < <(mount | grep '/media/' | awk '{print $3}')
+    done < <(mount | grep  -E '/mnt/|/media/' | awk '{print $3}')
 
     # 2. Fehlerprüfung
     if [ ${#POSSIBLE_MASTER_DIRECTORIES[@]} -eq 0 ]; then
