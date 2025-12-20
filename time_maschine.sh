@@ -2,6 +2,7 @@
 #
 # Time Machine
 # (c) google gemini & pheek 2025
+# V 1.0
 
 ## -- 1 --
 # Vorausetzung:
@@ -32,7 +33,7 @@ find_master_candidates() {
         if [[ "$line" != "$TIME_MACHINE_DIR" ]]; then
             POSSIBLE_MASTER_DIRECTORIES+=("$line")
         fi
-    done < <(mount | grep  -E '/mnt/|/media/' | awk '{print $3}')
+    done < <(mount | grep -E '/mnt/|/media/' | awk '{print $3}')
 
     # 2. Fehlerprüfung
     if [ ${#POSSIBLE_MASTER_DIRECTORIES[@]} -eq 0 ]; then
@@ -142,11 +143,29 @@ mkdir ${NEW_DATE_DIR}
 ## b) Kopiere via Hardlinks alles vom alten ins neue directory
 cp -al ${OLD_DATE_DIR}/* ${NEW_DATE_DIR}
 
-## c) sync alle Hauptverzeichnisse
-MAIN_DIRECTORIES=("fotos" "audio" "scans" "bilder" "video")
+##  c) (Was wird gebackupt?)
+#     Liest die vorhandenen Ordner aus dem letzten Backup aus
+#     (Nur) Alle diese müssen gebackupt werden.
+#     Wenn einmal ein neuer Ordner auf dem Master vorhanden sein wird, wird
+#     dieser NICHT automatsch "gebackupt" Dieser muss zum ersten Mal von
+#     Hand eingepflegt werden. So habe ich es in der Hand, welche Directories
+#     überhaupt gebackupt werden sollen.
 
+set_main_directories() {
+    MAIN_DIRECTORIES=()
+    # Wir loopen durch alle Verzeichnisse im alten Snapshot
+    for dir in "${OLD_DATE_DIR}"/*/; do
+        # basename entfernt den Pfad, sodass nur der Ordnername bleibt
+        [[ -d "$dir" ]] && MAIN_DIRECTORIES+=("$(basename "$dir")")
+    done
+}
+
+# Hole alle alten Hauptverzeichnisse aus YYYY_MM_DD, die gebackupt werden sollen
+set_main_directories
+
+# d) So, nun mittels rsync alle Directories vergleichen und backupen.
 for MAIN_DIR in "${MAIN_DIRECTORIES[@]}"; do
-		echo "  -- sync ${MAIN_DIR}"
+		echo " -- sync ${MAIN_DIR}..."
 		rsync -a --delete \
           --link-dest="${OLD_DATE_DIR}/${MAIN_DIR}" \
           "${FROM_DIR}/${MAIN_DIR}/" \
@@ -156,4 +175,5 @@ for MAIN_DIR in "${MAIN_DIRECTORIES[@]}"; do
         echo "FEHLER: rsync für ${MAIN_DIR} fehlgeschlagen!"
         exit 1
     fi
+		echo "   ... (done)."
 done
