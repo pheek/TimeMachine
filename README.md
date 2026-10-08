@@ -14,5 +14,6 @@ b) Kopiere alles vom letzten Backup mit Hardlinks ins neue Verzeichnis:
    cp -al 2025_11_21 2025_11_22
 
 c) backupe den Master ins neue Verzeichnis. Dabei werden auch Dateien auf dem
-   Master gelöscht, Verzeichnsse verschoben etc.	
+   neuen Master-Backup gelöscht, Verzeichnsse verschoben etc.	
    dies geschieht via "rsync". Details im Skript selbst.
+   Gelöschte und verschobene Dateien sind im alten Backup jedoch noch vollständig vorhanden.
